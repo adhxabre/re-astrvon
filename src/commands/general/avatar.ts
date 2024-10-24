@@ -22,7 +22,7 @@ const command: Command = {
 
         const avatarUrl = targetUser.displayAvatarURL({size: 1024, forceStatic: false});
         const largeAvatarUrl = targetUser.displayAvatarURL({size: 4096, forceStatic: false});
-        const dominantColor = getDominantColor(largeAvatarUrl);
+        const dominantColor = await getDominantColor(largeAvatarUrl);
 
         const embed = new EmbedBuilder()
             .setColor(dominantColor)
