@@ -20,11 +20,12 @@ const command: Command = {
         const targetUser = interaction.options.getUser('user') || interaction.user;
         const isInGuild = interaction.guild !== null;
 
-        const avatarUrl = targetUser.displayAvatarURL({ size: 1024, forceStatic: false });
-        const largeAvatarUrl = targetUser.displayAvatarURL({ size: 4096, forceStatic: false });
+        const avatarUrl = targetUser.displayAvatarURL({size: 1024, forceStatic: false});
+        const largeAvatarUrl = targetUser.displayAvatarURL({size: 4096, forceStatic: false});
+        const dominantColor = getDominantColor(largeAvatarUrl);
 
         const embed = new EmbedBuilder()
-            .setColor(getDominantColor(largeAvatarUrl))
+            .setColor(dominantColor)
             .setAuthor({
                 name: 'Click here to enlarge!',
                 url: largeAvatarUrl
@@ -46,7 +47,7 @@ const command: Command = {
             embed.setDescription(`Your avatar.`);
         }
 
-        await interaction.editReply({ embeds: [embed] });
+        await interaction.editReply({embeds: [embed]});
     }
 }
 
