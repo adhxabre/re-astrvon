@@ -18,8 +18,6 @@
 
 </div>
 
----
-
 ### Quick Start
 
 > [!NOTE]
