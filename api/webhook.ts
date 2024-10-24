@@ -1,10 +1,7 @@
 import { VercelRequest, VercelResponse } from '@vercel/node';
 import dotenv from 'dotenv';
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
-import { Command } from '../src/types/Command';
+import { Client, GatewayIntentBits } from 'discord.js';
 import { ExtendedClient } from '../src/types/ExtendedClient';
-import handleEvents from '../src/functions/handlers/handleEvents';
-import handleCommands from '../src/functions/handlers/handleCommands';
 
 dotenv.config();
 
@@ -12,16 +9,11 @@ const client: ExtendedClient = new Client({
     intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers],
 }) as ExtendedClient;
 
-client.commands = new Collection<string, Command>();
-client.commandArray = [];
-
 // Initialize bot
 let isInitialized = false;
 
 async function initializeBot() {
     if (!isInitialized) {
-        handleEvents(client);
-        handleCommands(client);
         await client.login(process.env.TOKEN);
         console.log('Bot is logged in.');
         isInitialized = true;
