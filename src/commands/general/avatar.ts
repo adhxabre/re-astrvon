@@ -1,6 +1,7 @@
 import {SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CommandInteraction} from 'discord.js';
 import {Command} from '../../types/Command'
 import {ExtendedClient} from "../../types/ExtendedClient";
+import Vibrant from "node-vibrant";
 
 const command: Command = {
     data: new SlashCommandBuilder()
@@ -17,29 +18,48 @@ const command: Command = {
         await interaction.deferReply();
 
         const targetUser = interaction.options.getUser('user') || interaction.user;
-        const member = interaction.guild?.members.cache.get(targetUser.id)
+        const isInGuild = interaction.guild !== null;
 
-        if (!member) {
-            await interaction.editReply('User not found on this server.')
-            return
-        }
+        const avatarUrl = targetUser.displayAvatarURL({ size: 1024, forceStatic: false });
+        const largeAvatarUrl = targetUser.displayAvatarURL({ size: 4096, forceStatic: false });
 
         const embed = new EmbedBuilder()
-            .setColor('#0099FF')
+            .setColor(getDominantColor(largeAvatarUrl))
             .setAuthor({
                 name: 'Click here to enlarge!',
-                url: member.displayAvatarURL({size: 4096})
+                url: largeAvatarUrl
             })
-            .setDescription(`${member.user.tag}'s avatar.`)
-            .setImage(member.displayAvatarURL({size: 1024}))
+            .setImage(avatarUrl)
             .setFooter({
                 text: `Requested by ${interaction.user.tag}`,
                 iconURL: interaction.user.displayAvatarURL()
             })
             .setTimestamp();
 
-        await interaction.editReply({embeds: [embed]})
+        if (isInGuild) {
+            if (targetUser.id === interaction.user.id) {
+                embed.setDescription(`Your avatar.`);
+            } else {
+                embed.setDescription(`${targetUser.tag}'s avatar.`);
+            }
+        } else {
+            embed.setDescription(`Your avatar.`);
+        }
+
+        await interaction.editReply({ embeds: [embed] });
     }
+}
+
+async function getDominantColor(url: string): Promise<number> {
+    try {
+        const palette = await Vibrant.from(url).getPalette();
+        if (palette.Vibrant) {
+            return parseInt(palette.Vibrant.hex.replace('#', ''), 16);
+        }
+    } catch (error) {
+        console.error('Error extracting color:', error);
+    }
+    return 0x0099FF; // Default color if extraction fails
 }
 
 export default command;
