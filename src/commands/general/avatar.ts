@@ -20,8 +20,8 @@ const command: Command = {
         const targetUser = interaction.options.getUser('user') || interaction.user;
         const isInGuild = interaction.guild !== null;
 
-        const avatarUrl = targetUser.displayAvatarURL({size: 1024, forceStatic: false});
-        const largeAvatarUrl = targetUser.displayAvatarURL({size: 4096, forceStatic: false});
+        const avatarUrl = targetUser.displayAvatarURL({extension: 'png', size: 1024, forceStatic: false});
+        const largeAvatarUrl = targetUser.displayAvatarURL({extension: 'png', size: 4096, forceStatic: false});
         const dominantColor = await getDominantColor(largeAvatarUrl);
 
         const embed = new EmbedBuilder()
